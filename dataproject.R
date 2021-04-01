@@ -1,5 +1,6 @@
 # install.packages("corrplot")
 # install.packages("ggcorrplot")
+# install.packages("data.table")
 
 library(data.table)
 library(ggplot2)
@@ -8,10 +9,10 @@ library(ggcorrplot)
 
 
 # Set a working directory to store all the related datasets and files.
-setwd("C:\\Users\\Justin Peh\\Desktop")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Import using data.table fread function
-raw.data <- fread("churndata.csv")
+raw.data <- fread("./dataset/Churn_Modelling.csv")
 
 # drop useless rows i.e. row number, customer id, and name
 data <- raw.data[,`:=`(RowNumber=NULL,CustomerId=NULL, Surname=NULL)]
