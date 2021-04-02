@@ -245,9 +245,9 @@ mean(predict.churn.train == trainset$Exited)
 # Confusion Matrix on Testset
 prob.test <- predict(m1, newdata = testset, type = 'response')
 predict.churn.test <- as.factor(ifelse(prob.test > 0.5, 1, 0))
-table1 <- table(testset$Exited, predict.churn.test)
-table1
-prop.table(table1)
+table2 <- table(testset$Exited, predict.churn.test)
+table2
+prop.table(table2)
 # Overall Accuracy
 mean(predict.churn.test == testset$Exited)
 
@@ -268,14 +268,15 @@ print(m3)
 printcp(m3, digits = 3)
 rpart.plot(m3, nn = T, main = "Optimal Tree in Churn Modelling")
 m3$variable.importance
-## Age and ageAtStartOfTenure most important.
+## Age and NumOfProducts most important.
 summary(m3)
 
+# Confusion Matrix
 cart.predict <- predict(m3, newdata = testset, type = "class")
 
-table2 <- table(Testset.Actual = testset$Exited, cart.predict, deparse.level = 2)
-table2
-round(prop.table(table2), 3)
+table3 <- table(Testset.Actual = testset$Exited, cart.predict, deparse.level = 2)
+table3
+round(prop.table(table3), 3)
 # Overall Accuracy
 mean(cart.predict == testset$Exited)
 
