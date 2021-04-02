@@ -223,6 +223,23 @@ ggplot(data, aes(x=salaryToAgeSq, fill=Geography)) + geom_histogram(binwidth = 5
 
 
 ## LOGISTIC REGRESSION
+raw.data <- fread("./dataset/Churn_Modelling.csv")
+
+# drop useless rows i.e. row number, customer id, and name
+data <- raw.data[,`:=`(RowNumber=NULL,CustomerId=NULL, Surname=NULL)]
+
+summary(data) # no missing values in any of the remaining columns 
+
+# we need to refactor the variables to the correct data type
+data$Geography <- factor(data$Geography)
+data$Gender <- factor(data$Gender)
+data$HasCrCard <- factor(data$HasCrCard)
+data$IsActiveMember <- factor(data$IsActiveMember)
+data$Exited <- factor(data$Exited)
+data$NumOfProducts <- factor(data$NumOfProducts)
+data <- data[,`:=`(ageAtStartOfTenure = (Age-Tenure))]
+
+summary(data)
 
 # Train-Test split
 set.seed(2014)
@@ -260,15 +277,15 @@ printcp(m2)
 plotcp(m2)
 print(m2)
 
-## 10th tree is optimal. Choose betw the 10th and 11th tree CP values.
-cp1 <- sqrt(0.00233754*0.00280505)
+# 8th tree is optimal. Choose between the 7th and 8th tree CP values.
+cp1 <- sqrt(0.00420757*0.00350631)
 
 m3 <- prune(m2, cp = cp1)
 print(m3)
 printcp(m3, digits = 3)
 rpart.plot(m3, nn = T, main = "Optimal Tree in Churn Modelling")
 m3$variable.importance
-## Age and NumOfProducts most important.
+# Age and NumOfProducts most important.
 summary(m3)
 
 # Confusion Matrix
