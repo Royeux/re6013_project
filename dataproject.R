@@ -6,7 +6,7 @@ library(data.table)
 library(ggplot2)
 library(corrplot)
 library(ggcorrplot)
-
+library(caTools)
 
 # Set a working directory to store all the related datasets and files.
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -218,4 +218,63 @@ ggplot(data, aes(x=salaryToAgeSq, fill=Geography)) + geom_histogram(binwidth = 5
 ggplot(data, aes(x=salaryToAgeSq, fill=Geography)) + geom_histogram(binwidth = 50) # not too clear here either. the greographic distributions seems to stay the same for all brackets
 
 # perhaps Germans tend to churn more not because they have different characteristics but becos the Germans have more options to choose from or something
+
+
+## LOGISTIC REGRESSION
+
+# Train-Test split
+set.seed(2014)
+train <- sample.split(Y = data$Exited, SplitRatio = 0.7)
+trainset <- subset(data, train == T)
+testset <- subset(data, train == F)
+
+m1 <- glm(Exited ~ . , family = binomial, data = trainset)
+summary(m1)
+
+# Confusion Matrix on Trainset
+prob.train <- predict(m1, type = 'response')
+predict.churn.train <- as.factor(ifelse(prob.train > 0.5, 1, 0))
+table1 <- table(trainset$Exited, predict.churn.train)
+table1
+prop.table(table1)
+# Overall Accuracy
+mean(predict.churn.train == trainset$Exited)
+
+# Confusion Matrix on Testset
+prob.test <- predict(m1, newdata = testset, type = 'response')
+predict.churn.test <- as.factor(ifelse(prob.test > 0.5, 1, 0))
+table1 <- table(testset$Exited, predict.churn.test)
+table1
+prop.table(table1)
+# Overall Accuracy
+mean(predict.churn.test == testset$Exited)
+
+
+## CART
+m2 <- rpart(Exited ~ ., data = trainset, method = 'class',
+            control = rpart.control(minsplit = 2, cp = 0))
+
+printcp(m2)
+plotcp(m2)
+print(m2)
+
+## 10th tree is optimal. Choose betw the 10th and 11th tree CP values.
+cp1 <- sqrt(0.00233754*0.00280505)
+
+m3 <- prune(m2, cp = cp1)
+print(m3)
+printcp(m3, digits = 3)
+rpart.plot(m3, nn = T, main = "Optimal Tree in Churn Modelling")
+m3$variable.importance
+## Age and ageAtStartOfTenure most important.
+summary(m3)
+
+cart.predict <- predict(m3, newdata = testset, type = "class")
+
+table2 <- table(Testset.Actual = testset$Exited, cart.predict, deparse.level = 2)
+table2
+round(prop.table(table2), 3)
+# Overall Accuracy
+mean(cart.predict == testset$Exited)
+
 
