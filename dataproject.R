@@ -1,6 +1,8 @@
 # install.packages("corrplot")
 # install.packages("ggcorrplot")
 # install.packages("data.table")
+# install.packages("caTools")
+# install.packages("rpart")
 
 library(data.table)
 library(ggplot2)
@@ -91,7 +93,7 @@ summary(data)
 # tend to say have a higher credit score? older? higher salary? etc?
 
 # see if the age distribution is different 
-ggplot(data, aes(x=Age, fill=hasManyProd)) + geom_histogram(binwidth=5)
+ggplot(data, aes(x=Age, fill=hasManyProd)) + geom_histogram(binwidth=5) + geom_density(alpha=.3)
 # histogram is not a good visualisation for this, try box plot
 ggplot(data, aes(x=hasManyProd, y=Age)) + geom_boxplot() # ok so we know that many-prod-ppl tend to be older
 ggplot(data, aes(x=hasManyProd, y=EstimatedSalary)) + geom_boxplot() # no clear distinction, maybe manyprod ppl tend tob be abit more high-earning
