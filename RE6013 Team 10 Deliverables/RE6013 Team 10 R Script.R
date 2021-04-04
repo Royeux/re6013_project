@@ -230,7 +230,7 @@ ggplot(data, aes(x=salaryToAgeSq, fill=Geography)) + geom_histogram(binwidth = 5
 
 
 ## LOGISTIC REGRESSION
-raw.data <- fread("./dataset/Churn_Modelling.csv")
+raw.data <- fread("./dataset/Original_Data.csv")
 
 # drop useless rows i.e. row number, customer id, and name
 data <- raw.data[,`:=`(RowNumber=NULL,CustomerId=NULL, Surname=NULL)]
