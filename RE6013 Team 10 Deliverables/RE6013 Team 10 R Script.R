@@ -17,6 +17,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Import using data.table fread function
 raw.data <- fread("./dataset/Churn_Modelling.csv")
+str(raw.data)
 
 # drop useless rows i.e. row number, customer id, and name
 data <- raw.data[,`:=`(RowNumber=NULL,CustomerId=NULL, Surname=NULL)]
@@ -30,7 +31,8 @@ data$HasCrCard <- factor(data$HasCrCard)
 data$IsActiveMember <- factor(data$IsActiveMember)
 data$Exited <- factor(data$Exited)
 
-summary(data) # check that refactoring was done right 
+summary(data) # check that refactoring was done right
+str(data)
 
 # first we need to confirm that the credit score is using PICO (US credit scoring system)
 # use ggplot to see the general distribution
@@ -85,9 +87,10 @@ data[,.N,by=.(NumOfProducts,Exited)][order(NumOfProducts,Exited)]
 data <- data[,hasManyProd:=(NumOfProducts>2)]
 data <- data[,has4Prod:=(NumOfProducts==4)]
 data <- data[,has3Prod:=(NumOfProducts==3)]
-data <- data[,has4Prod:=(NumOfProducts==4)]
+data <- data[,has4Prod:=(NumOfProducts==4)]   # Is this a duplicate line?
 
 summary(data)
+str(data)
 
 # do people with 3 or 4 products, compared with those with 1 or 2 products
 # tend to say have a higher credit score? older? higher salary? etc?
@@ -128,7 +131,7 @@ data$NumOfProducts <- factor(data$NumOfProducts)
 
 # check that it was done correctly
 summary(data)
-
+str(data)
 # check proportion of exits for each category of NumOfProduct
 ggplot(data, aes(x=NumOfProducts, fill=Exited)) + geom_bar(position="fill") # seems like those with 2 products are most likely to stay
 
@@ -142,6 +145,7 @@ ggplot(data, aes(x=Exited, y=CreditScore)) + geom_boxplot() + facet_grid(cols=va
 
 # maybe those who churned with one product are those who started their tenure late too
 data <- data[,`:=`(ageAtStartOfTenure = (Age-Tenure))]
+str(data)
 ggplot(data[NumOfProducts==1], aes(x=Exited, y=ageAtStartOfTenure)) + geom_boxplot() # this plot seems to suggest this 
 summary(data[NumOfProducts==1 & Exited==1, .(ageAtStartOfTenure)]) # get distribution data
 
@@ -164,6 +168,7 @@ ggplot(data[hasManyProd==1], aes(y=ageAtStartOfTenure)) + geom_boxplot()
 #the third one is earnings/age. perhaps those who are earning alot for their age tend to have different expectations for their banks
 # we create these columns first 
 data <- data[,`:=`(depositRate = (Balance/(Tenure+1)), savingsToSalaryRatio = (Balance/(Tenure+1)/EstimatedSalary), salaryToAgeSq = (EstimatedSalary/Age^2))]
+str(data)
 
 # now to plot them, startig with depositRate
 ggplot(data, aes(x=hasManyProd, y=depositRate)) + geom_boxplot() # not too clear, see the math
@@ -201,6 +206,7 @@ data[EstimatedSalary>100193 & EstimatedSalary <149388, salaryQuartile:="3Q"]
 data[EstimatedSalary>149388, salaryQuartile:="4Q"]
 data$salaryQuartile <- factor(data$salaryQuartile)
 summary(data)
+str(data)
 # how about the churn-on-1-product customers? do they tend to be earning lower for their age too?
 ggplot(data[NumOfProducts==1], aes(x=Exited, y=salaryToAgeSq)) + geom_boxplot() # 
 ggplot(data[NumOfProducts==1], aes(x=salaryToAgeSq, fill=Exited)) + geom_histogram(binwidth = 5) # no clear difference 
@@ -242,6 +248,7 @@ data$NumOfProducts <- factor(data$NumOfProducts)
 data <- data[,`:=`(ageAtStartOfTenure = (Age-Tenure))]
 
 summary(data)
+str(data)
 
 # Train-Test split
 set.seed(2014)
@@ -250,7 +257,10 @@ trainset <- subset(data, train == T)
 testset <- subset(data, train == F)
 
 m1 <- glm(Exited ~ . , family = binomial, data = trainset)
+
+
 summary(m1)
+summary(residuals(m1))
 
 # Confusion Matrix on Trainset
 prob.train <- predict(m1, type = 'response')
