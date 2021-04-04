@@ -87,7 +87,6 @@ data[,.N,by=.(NumOfProducts,Exited)][order(NumOfProducts,Exited)]
 data <- data[,hasManyProd:=(NumOfProducts>2)]
 data <- data[,has4Prod:=(NumOfProducts==4)]
 data <- data[,has3Prod:=(NumOfProducts==3)]
-data <- data[,has4Prod:=(NumOfProducts==4)]   # Is this a duplicate line?
 
 summary(data)
 str(data)
