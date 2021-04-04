@@ -277,8 +277,8 @@ printcp(m2)
 plotcp(m2)
 print(m2)
 
-# 8th tree is optimal. Choose between the 7th and 8th tree CP values.
-cp1 <- sqrt(0.00420757*0.00350631)
+# 4th tree is optimal. Choose between the 3rd and 4th tree CP values.
+cp1 <- sqrt(0.03085554*0.00584385)
 
 m3 <- prune(m2, cp = cp1)
 print(m3)
