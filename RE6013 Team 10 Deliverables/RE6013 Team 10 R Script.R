@@ -16,7 +16,7 @@ library(rpart.plot)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Import using data.table fread function
-raw.data <- fread("./dataset/Churn_Modelling.csv")
+raw.data <- fread("./dataset/Original_Data.csv")
 str(raw.data)
 
 # drop useless rows i.e. row number, customer id, and name
